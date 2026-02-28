@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
 
   const video = await prisma.video.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       teacher: {
         select: {
@@ -28,13 +29,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (!video) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   // Increment view count
-  await prisma.video.update({ where: { id: params.id }, data: { views: { increment: 1 } } });
+  await prisma.video.update({ where: { id }, data: { views: { increment: 1 } } });
 
   // Update watch history if logged in
   if (session?.user.id) {
     await prisma.watchHistory.upsert({
-      where: { userId_videoId: { userId: session.user.id, videoId: params.id } },
-      create: { userId: session.user.id, videoId: params.id, progress: 0 },
+      where: { userId_videoId: { userId: session.user.id, videoId: id } },
+      create: { userId: session.user.id, videoId: id, progress: 0 },
       update: {},
     });
   }

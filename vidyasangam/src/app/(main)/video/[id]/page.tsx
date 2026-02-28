@@ -50,7 +50,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
       <div className="lg:col-span-2 space-y-6">
         {/* Player */}
         <div className="bg-black rounded-xl overflow-hidden aspect-video">
-          <ReactPlayer url={video.url} width="100%" height="100%" controls playing={false} />
+          <ReactPlayer src={video.url} width="100%" height="100%" controls playing={false} />
         </div>
 
         {/* Info */}
