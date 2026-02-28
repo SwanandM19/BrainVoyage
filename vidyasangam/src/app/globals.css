@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --bg-neutral: #F8F9FA;
+  --accent-orange: #F97316;
+  --text-dark: #111827;
+  --border-light: #E5E7EB;
+}
+
+body {
+  font-family: var(--font-inter), sans-serif;
+  background-color: var(--bg-neutral);
+}
+
+* { box-sizing: border-box; }
