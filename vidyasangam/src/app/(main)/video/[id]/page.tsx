@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useSession } from "next-auth/react";
 import ReactPlayer from "react-player";
 import Link from "next/link";
 
-export default function VideoPage({ params }: { params: { id: string } }) {
+export default function VideoPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session } = useSession();
+  const resolvedParams = use(params);
   const [video, setVideo] = useState<any>(null);
   const [comment, setComment] = useState("");
   const [liked, setLiked] = useState(false);
@@ -14,12 +15,12 @@ export default function VideoPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/videos/${params.id}`).then((r) => r.json()).then((d) => { setVideo(d); setLoading(false); });
-  }, [params.id]);
+    fetch(`/api/videos/${resolvedParams.id}`).then((r) => r.json()).then((d) => { setVideo(d); setLoading(false); });
+  }, [resolvedParams.id]);
 
   async function handleLike() {
     if (!session) return;
-    const res = await fetch("/api/likes", { method: "POST", body: JSON.stringify({ videoId: params.id }), headers: { "Content-Type": "application/json" } });
+    const res = await fetch("/api/likes", { method: "POST", body: JSON.stringify({ videoId: resolvedParams.id }), headers: { "Content-Type": "application/json" } });
     const data = await res.json();
     setLiked(data.liked);
   }
@@ -34,7 +35,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
   async function postComment(e: React.FormEvent) {
     e.preventDefault();
     if (!session || !comment.trim()) return;
-    const res = await fetch("/api/comments", { method: "POST", body: JSON.stringify({ videoId: params.id, content: comment }), headers: { "Content-Type": "application/json" } });
+    const res = await fetch("/api/comments", { method: "POST", body: JSON.stringify({ videoId: resolvedParams.id, content: comment }), headers: { "Content-Type": "application/json" } });
     const newComment = await res.json();
     setVideo((v: any) => ({ ...v, comments: [newComment, ...v.comments] }));
     setComment("");
@@ -86,7 +87,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
           <div className="space-y-4">
             {video.comments?.map((c: any) => (
               <div key={c.id} className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-xs flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-xs shrink-0">
                   {(c.user?.studentProfile?.fullName ?? c.user?.name ?? "U").charAt(0)}
                 </div>
                 <div>
