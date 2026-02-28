@@ -111,7 +111,7 @@ export default async function LandingPage() {
             <span className="text-orange-500">Rank Higher.</span>
           </h1>
           <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            Join thousands of students discovering verified teachers, short learning videos, and competitive games — all filtered by your class and board.
+            Join Lakhs of students discovering verified teachers, short learning videos, and competitive games — all filtered by your class and board.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login" className="bg-orange-500 hover:bg-orange-600 text-white font-extrabold py-4 px-10 rounded text-base shadow-md transition">
